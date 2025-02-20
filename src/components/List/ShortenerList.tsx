@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import { API_BASE_URL, DeleteUrl, GetUrlList } from "../../network/api";
+import { DeleteUrl, GetUrlList } from "../../network/api";
 import ShortenerForm from "../Form/ShortenerForm";
 import { Url } from "../../types/Url";
+import { get_short_link } from "../../utils/short-link";
 
 export default function ShortenerList()
 {
@@ -11,7 +12,8 @@ export default function ShortenerList()
     const fetchUrlList = async () => {
         try {
             const urls = await GetUrlList();
-            setUrlList(urls.data); 
+            const urlData: Url[] = urls.data;
+            setUrlList(urlData); 
         }
         catch (error)
         {
@@ -54,14 +56,14 @@ export default function ShortenerList()
                     </p>
                     <div className="flex flex-col items-center justify-end flex-1 space-x-4 space-y-2 md:flex-row md:space-y-0">
                         <a
-                            href={`${API_BASE_URL}/shorteners/${url.short_url}`}
+                            href={get_short_link(url.short_url)}
                             className="font-bold text-cyan hover:text-blue-400 hover:underline" target="_blank"
                         >
-                            {`${API_BASE_URL}/shorteners/${url.short_url}`}
+                            {get_short_link(url.short_url)}
                         </a>
                         <button
                             className="py-2 px-8 bg-blue-300 rounded-lg hover:opacity-70 focus:outline-none hover:cursor-copy"
-                            onClick={() => handleCopy(`${API_BASE_URL}/shorteners/${url.short_url}`)}
+                            onClick={() => handleCopy(get_short_link(url.short_url))}
                         >
                             Copy
                         </button>
