@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import { API_BASE_URL, DeleteUrl, GetUrlList } from "../../network/api";
+import ShortenerForm from "../Form/ShortenerForm";
+import { Url } from "../../types/Url";
 
 export default function ShortenerList()
 {
-    const [urlList, setUrlList] = useState<any>([]);
+    const [urlList, setUrlList] = useState<Url[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     const fetchUrlList = async () => {
@@ -17,15 +19,7 @@ export default function ShortenerList()
         }
     };
 
-    const handleCopy = (text: string) => {
-        navigator.clipboard.writeText(text)
-        .then(() => {
-            alert('Copied the url!');
-        })
-        .catch(err => {
-            console.error('Error in copying: ', err);
-        });
-    };
+    const handleCopy = (text: string) => navigator.clipboard.writeText(text);
 
     const handleDelete = async (id: string) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this URL?");
@@ -41,13 +35,19 @@ export default function ShortenerList()
         }
     };
 
+    const onShortenClick = () => {
+        fetchUrlList()
+    }
+
     useEffect(() => {
         fetchUrlList();
     }, [])
 
     return (
         <>
-            {urlList.length > 0 ? urlList.map((url: {id: string, short_url: string, long_url: string}) => 
+            <ShortenerForm onShortenClick={onShortenClick} />
+
+            {urlList.length > 0 && !error ? urlList.map((url: Url) => 
                 <div key={url.id} className="flex flex-col items-center justify-between w-full space-x-4 p-6 bg-white rounded-lg md:flex-row">
                     <p className="font-bold text-center text-veryDarkViolet md:text-left">
                         {url.long_url}
@@ -74,7 +74,7 @@ export default function ShortenerList()
                     </div>
                 </div>
             ) : (
-                <div>There is no data</div>
+                <div className="text-2xl">There is no data</div>
             )}
         </>
     )

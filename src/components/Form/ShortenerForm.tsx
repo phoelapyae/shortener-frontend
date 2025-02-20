@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { GenerateUrl } from "../../network/api";
 
-export default function ShortenerForm()
+interface onShortenClickProps {
+    onShortenClick: () => void
+}
+
+export default function ShortenerForm({onShortenClick}: onShortenClickProps)
 {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [error, setError]                   = useState<string | null>(null);
@@ -21,7 +25,8 @@ export default function ShortenerForm()
         try {
             await GenerateUrl(url);
             setSuccessMessage('Url generated successfully.');
-            setUrl({long_url: ''});
+            setUrl({ long_url: '' });
+            onShortenClick();
         }
         catch (error)
         {
